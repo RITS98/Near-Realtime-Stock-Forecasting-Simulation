@@ -2,3 +2,10 @@
 __pycache__/
 */__pycache__/
 /postgres/data/
+api_key.txt
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
