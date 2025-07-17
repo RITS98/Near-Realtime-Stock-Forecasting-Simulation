@@ -224,3 +224,70 @@ networks:
 <img width="1670" height="597" alt="image" src="https://github.com/user-attachments/assets/2227f7e0-a23d-45dc-80a8-8c42617a047d" />
 
 
+### Setup AWS Lambda
+
+1. Setup the lambda.
+2. The lambda code does some transformation on the stream data before dumping the data into S3.
+<img width="1635" height="919" alt="image" src="https://github.com/user-attachments/assets/a9ce2be0-50b5-4f4c-8114-a6dd3a0a7c6f" />
+
+3. Add the code given below
+```
+import json
+import base64
+from datetime import datetime
+
+def lambda_handler(event, context):
+    output = []
+
+    for record in event['records']:
+        # Decode and parse record
+        payload = base64.b64decode(record['data']).decode('utf-8')
+        try:
+            data = json.loads(payload)
+
+            # Parse DynamoDB NewImage if needed
+            if 'dynamodb' in data and 'NewImage' in data['dynamodb']:
+                item = data['dynamodb']['NewImage']
+                def get_value(attr): return attr.get('S') or attr.get('N')
+
+                transformed = {
+                    "stock_symbol": get_value(item['stock_symbol']),
+                    "date": get_value(item['date']),
+                    "open_price": get_value(item['open_price']),
+                    "high_price": get_value(item['high_price']),
+                    "low_price": get_value(item['low_price']),
+                    "close_price": get_value(item['close_price']),
+                    "volume": get_value(item['volume']),
+                }
+
+                # Extract year/month for partitioning
+                date_obj = datetime.strptime(transformed['date'], "%Y-%m-%d")
+                year = date_obj.strftime("%Y")
+                month = date_obj.strftime("%m")
+
+                # Add dynamic S3 prefix as metadata
+                output.append({
+                    'recordId': record['recordId'],
+                    'result': 'Ok',
+                    'data': base64.b64encode((json.dumps(transformed) + "\n").encode('utf-8')).decode('utf-8'),
+                    'metadata': {
+                        'partitionKeys': {
+                            'year': year,
+                            'month': month
+                        }
+                    }
+                })
+            else:
+                raise Exception("Missing NewImage in record")
+
+        except Exception as e:
+            output.append({
+                'recordId': record['recordId'],
+                'result': 'ProcessingFailed',
+                'data': record['data']
+            })
+
+    return {'records': output}
+```
+4. Click on `Deploy` button.
+
