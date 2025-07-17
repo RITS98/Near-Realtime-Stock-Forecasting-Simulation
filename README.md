@@ -182,3 +182,8 @@ networks:
 
 ### Setup Airflow
 1. Access the Airflow UI at `http://localhost:8001`.
+2. Add AWS credentials
+<img width="1680" height="900" alt="image" src="https://github.com/user-attachments/assets/2f104803-360a-4746-97ef-2e2e92287541" />
+
+
+### Setup AWS S3
