@@ -194,3 +194,18 @@ networks:
 <img width="3410" height="4479" alt="image" src="https://github.com/user-attachments/assets/f11cb05b-540a-486e-8c42-17781028df09" />
 
 <img width="1123" height="475" alt="image" src="https://github.com/user-attachments/assets/87a2461a-1985-499a-b4ff-3ce9d6921b60" />
+
+
+### Setup AWS DynamoDB
+
+1. Go to Dynamo DB in AWS and click on `Create Table`
+2. Fill the information and click on `Create Table`
+
+<img width="1642" height="1523" alt="image" src="https://github.com/user-attachments/assets/ee8fb933-b786-4682-b8c3-94b67347f0c1" />
+
+
+### Setup AWS Kinesis
+
+1. Go to AWS Kinesis Service and fill the information.
+<img width="1656" height="1204" alt="image" src="https://github.com/user-attachments/assets/cdf5d8f4-cbbb-41d9-988a-643d1f48b134" />
+
