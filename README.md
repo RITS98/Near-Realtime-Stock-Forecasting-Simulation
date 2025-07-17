@@ -86,7 +86,7 @@ graph TD
     class O ml
 ```
 
-## Setup Instructions
+## Setup Instructions and Results
 
 ### Aetup Local Infrastructure
 1. Setup PostgreSQL, Apache Airflow and PGAdmin on your local machine using Docker.
@@ -290,4 +290,45 @@ def lambda_handler(event, context):
     return {'records': output}
 ```
 4. Click on `Deploy` button.
+
+<img width="1384" height="1925" alt="image" src="https://github.com/user-attachments/assets/ef877391-363e-48a2-ba49-ed7b02b4b58d" />
+
+
+### Setup AWS Data Firehose
+
+1. Create Data Firehose as shown below
+
+<img width="3276" height="7437" alt="image" src="https://github.com/user-attachments/assets/65b56e87-1d27-4ba6-8365-ac629b8d7f0e" />
+
+2. Add necessary permissions
+
+<img width="1250" height="298" alt="image" src="https://github.com/user-attachments/assets/b8b0f7a5-0d69-41f9-a33f-83541ecc7844" />
+<img width="1410" height="698" alt="image" src="https://github.com/user-attachments/assets/bded4120-fc20-4fe1-b367-b443e019a7b1" />
+
+3.  We can see the folders and data
+<img width="892" height="442" alt="image" src="https://github.com/user-attachments/assets/c7d962be-8bbc-429c-81df-25d6916d5e46" />
+
+<img width="969" height="768" alt="image" src="https://github.com/user-attachments/assets/4e895b64-2693-49f8-beee-4bf80607b875" />
+
+<img width="1115" height="509" alt="image" src="https://github.com/user-attachments/assets/45047f6a-2993-42af-98ef-a53719eef6d5" />
+
+
+###  Create a Glue Crawler
+
+1. Crea a Glue Database
+
+<img width="1689" height="424" alt="image" src="https://github.com/user-attachments/assets/a6ea38de-b7c8-4ac3-8d24-4542339150cc" />
+
+2. Create a Classifier for efficient metadata retrieval
+<img width="1294" height="665" alt="image" src="https://github.com/user-attachments/assets/cda350e9-0621-47b4-8709-f78bdbc57c0a" />
+
+3. Create a Glue crawler
+<img width="1659" height="996" alt="image" src="https://github.com/user-attachments/assets/384be647-f6c6-4e13-b83f-dabdd52614f9" />
+
+
+### Create Glue ETL Job
+
+1. Create a GLue Visual ETL Job
+<img width="1649" height="582" alt="image" src="https://github.com/user-attachments/assets/b9ec122e-28ef-499c-b351-080ff23a5e4b" />
+
 
