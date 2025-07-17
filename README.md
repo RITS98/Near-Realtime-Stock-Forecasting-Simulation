@@ -346,10 +346,10 @@ def lambda_handler(event, context):
 
 **Step 1: Prepare Your Data in S3**
 
-Ensure that the data:
-	•	Is stored in S3 in a structured format (e.g., CSV, Parquet, or JSON)
-	•	Is optionally partitioned (e.g., by year/month)
-	•	Has consistent schema for querying with Athena
+Ensure that the data:  
+	•	Is stored in S3 in a structured format (e.g., CSV, Parquet, or JSON)  
+	•	Is optionally partitioned (e.g., by year/month)  
+	•	Has consistent schema for querying with Athena  
 
 **Step 2: Create an Athena Table for Your Data**
 
@@ -383,37 +383,37 @@ MSCK REPAIR TABLE netflix_stock_data;
 This loads the year and month partitions automatically.
 
 **Step 3: Enable Athena as a Data Source in QuickSight**
-	1.	Go to the AWS QuickSight console:
+	1.	Go to the AWS QuickSight console:  
 https://quicksight.aws.amazon.com
-	2.	From the top-right, click on your user profile → Manage QuickSight
-	3.	In the Security & permissions section:
-	•	Add permissions for Athena and S3
-	•	Make sure QuickSight can access the Athena workgroup and S3 bucket
-	4.	Enable access to the Athena query results bucket (e.g., aws-athena-query-results-<account-id>-region)
+	2.	From the top-right, click on your user profile → Manage QuickSight.  
+	3.	In the Security & permissions section:   
+	•	Add permissions for Athena and S3.  
+	•	Make sure QuickSight can access the Athena workgroup and S3 bucket.  
+	4.	Enable access to the Athena query results bucket (e.g., aws-athena-query-results-<account-id>-region).  
 
 **Step 4: Create a Data Set in QuickSight**
-	1.	Go to QuickSight > Datasets
-	2.	Click New dataset
-	3.	Choose Athena as the data source
-	4.	Give it a name (e.g., netflix_stock)
-	5.	Select your Athena workgroup (typically primary)
-	6.	Choose the database and select the table netflix_stock_data
-	7.	Click Edit/Preview data
-	8.	(Optional) Apply filters or calculated fields
-	9.	Click Save & Publish
+	1.	Go to QuickSight > Datasets.   
+	2.	Click New dataset.  
+	3.	Choose Athena as the data source.  
+	4.	Give it a name (e.g., netflix_stock).  
+	5.	Select your Athena workgroup (typically primary).  
+	6.	Choose the database and select the table netflix_stock_data   
+	7.	Click Edit/Preview data   
+	8.	(Optional) Apply filters or calculated fields   
+	9.	Click Save & Publish   
 
 **Step 5: Build Your Analysis**
-	1.	Go to QuickSight > Analyses
-	2.	Click New analysis
-	3.	Choose your netflix_stock dataset
-	4.	Now:
-	•	Drag fields into visuals (e.g., close_price over date)
-	•	Use filters to focus by stock symbol or year
-	•	Use different visuals: bar, line, pie, scatter, pivot tables, etc.
+	1.	Go to QuickSight > Analyses   
+	2.	Click New analysis   
+	3.	Choose your netflix_stock dataset   
+	4.	Now:   
+	•	Drag fields into visuals (e.g., close_price over date)   
+	•	Use filters to focus by stock symbol or year   
+	•	Use different visuals: bar, line, pie, scatter, pivot tables, etc.   
 
 **Step 6: Share or Publish Your Dashboard**
-	1.	Save your analysis
-	2.	Click Share > Publish dashboard
-	3.	Set access permissions (IAM users/groups or email addresses)
+	1.	Save your analysis   
+	2.	Click Share > Publish dashboard   
+	3.	Set access permissions (IAM users/groups or email addresses).  
 
 <img width="947" height="358" alt="image" src="https://github.com/user-attachments/assets/7c079316-47be-498e-8237-036b3c78ef55" />
