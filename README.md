@@ -187,3 +187,10 @@ networks:
 
 
 ### Setup AWS S3
+
+1. Create a S3 bucket which holds the raw data from the Change Data Capture from AWS Firehose after apply some transformation using AWS Lambda.
+2. Create a second S3 bucket where the actual Hudi data will be stored.
+3. The process of creating S3 buckets are shown below
+<img width="3410" height="4479" alt="image" src="https://github.com/user-attachments/assets/f11cb05b-540a-486e-8c42-17781028df09" />
+
+<img width="1123" height="475" alt="image" src="https://github.com/user-attachments/assets/87a2461a-1985-499a-b4ff-3ce9d6921b60" />
