@@ -1,0 +1,60 @@
+
+services:
+    db:
+        container_name: postgres_container
+        image: postgres:14
+        ports:
+            - "5001:5432"
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        env_file:
+            - .env
+        volumes:
+            - ./postgres/data:/var/lib/postgresql/data
+            - ./postgres/airflow_init.sql:/docker-entrypoint-initdb.d/airflow_init.sql
+        networks:
+            - my_network
+
+    airflow:
+        container_name: airflow_container
+        image: apache/airflow:3.0.0
+        ports:
+            - "8001:8080"
+        environment:
+            AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@db:5432/airflow_db
+        env_file:
+            - .env
+        volumes:
+            - ./airflow/dags:/opt/airflow/dags
+            - ./airflow/logs:/opt/airflow/logs
+            - ./airflow/plugins:/opt/airflow/plugins
+            - ./code:/opt/airflow/code
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./requirements.txt:/opt/airflow/requirements.txt
+        depends_on:
+            - db
+        networks:
+            - my_network
+        command: >
+            bash -c "airflow db migrate &&
+            airflow standalone"
+
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: pgadmin_container
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+        volumes:
+            - ./postgres/.pgpass:/pgpass/pgpassfile/.pgpass
+        ports:
+            - "8055:80"
+        depends_on:
+            - db
+        networks:
+            - my_network
+networks:
+    my_network:
+        driver: bridge
