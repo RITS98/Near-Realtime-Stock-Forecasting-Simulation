@@ -209,3 +209,18 @@ networks:
 1. Go to AWS Kinesis Service and fill the information.
 <img width="1656" height="1204" alt="image" src="https://github.com/user-attachments/assets/cdf5d8f4-cbbb-41d9-988a-643d1f48b134" />
 
+<img width="1162" height="366" alt="image" src="https://github.com/user-attachments/assets/3296e953-6f11-40dc-abfc-b8a4957d1d83" />
+
+
+2. After this we need to go back to Dynamo DB and enable the streaming as shown below.
+<img width="1292" height="461" alt="image" src="https://github.com/user-attachments/assets/cda5d248-f67b-48ba-aa05-1149d0fd17cf" />
+
+<img width="1678" height="592" alt="image" src="https://github.com/user-attachments/assets/d57fef88-f658-467c-9cfa-d393fa6b35bd" />
+
+<img width="1684" height="821" alt="image" src="https://github.com/user-attachments/assets/88137196-13ff-41d9-854b-826c8ed50984" />
+
+<img width="1676" height="618" alt="image" src="https://github.com/user-attachments/assets/6725f2ac-0b96-46ea-96a4-cdb41f116963" />
+
+<img width="1670" height="597" alt="image" src="https://github.com/user-attachments/assets/2227f7e0-a23d-45dc-80a8-8c42617a047d" />
+
+
