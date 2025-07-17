@@ -1,6 +1,21 @@
 # Near Realtime Stock Forecasting Using Docker, Python, Airflow, PostgreSQL and MLOps
 
-A comprehensive data pipeline for stock price forecasting using modern data engineering and machine learning practices. This project demonstrates real-time data processing, automated workflows, and predictive analytics for financial data.
+A comprehensive data pipeline for stock price forecasting using modern data engineering and machine learning practices. This project demonstrates simulation of near real-time data processing, automated workflows, and predictive analytics for financial data.
+
+## Technologies Used
+- **Data Ingestion**: AWS DynamoDB, AWS Kinesis Data Streams, AWS Kinesis Firehose
+- **Data Storage**: Amazon S3, AWS Glue, PostgreSQL
+- **Data Processing**: AWS Lambda, AWS Glue Jobs
+- **Machine Learning**: MLflow, DagsHub, Ray Tune, Pytorch
+- **Visualization**: Streamlit, AWS Athena, AWS QuickSight 
+- **Orchestration**: Apache Airflow
+- **Containerization**: Docker
+
+## Data Used
+
+Historical stock data for Netflix, including features like open, high, low, close prices, volume, and technical indicators.
+
+## Architecture Overview
 
 ```mermaid
 graph TD
@@ -70,3 +85,100 @@ graph TD
     class N download
     class O ml
 ```
+
+## Setup Instructions
+
+### Aetup Local Infrastructure
+1. Setup PostgreSQL, Apache Airflow and PGAdmin on your local machine using Docker.
+2. Clone the repository and navigate to the project directory.
+3. Run the following command to start the Airflow web server and scheduler:
+   ```bash
+   docker-compose up -d
+   ```
+4. Access the Airflow UI at `http://localhost:8080` and trigger the DAG for real-time data processing.
+5. Monitor the logs and outputs in the Airflow UI to ensure everything is functioning correctly
+6. The docker-compose code is given below with detailed comments.
+
+```yaml
+services:
+  # Database Service
+  db:
+    container_name: postgres_container # Name of the container for the PostgreSQL database.
+    image: postgres:14 # Use the official PostgreSQL version 14 image.
+    ports:
+      - "5001:5432" # Map port 5432 of the container to port 5001 on the host machine.
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER} # PostgreSQL user, taken from the .env file.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # PostgreSQL password, taken from the .env file.
+      POSTGRES_DB: ${POSTGRES_DB} # PostgreSQL database name, taken from the .env file.
+    env_file:
+      - .env # Specify the environment file to use for setting environment variables.
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data # Persist database data to a local directory.
+      - ./postgres/airflow_init.sql:/docker-entrypoint-initdb.d/airflow_init.sql # Mount initialization SQL script.
+    networks:
+      - my_network # Connect this container to the custom network named 'my_network'.
+
+  # Airflow Service
+  airflow:
+    container_name: airflow_container # Name of the container for Apache Airflow.
+    image: apache/airflow:3.0.0 # Use the official Apache Airflow version 3.0.0 image.
+    ports:
+      - "8001:8080" # Map port 8080 of the container to port 8001 on the host machine.
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@db:5432/airflow_db
+      # Connection string for Airflow to connect to the PostgreSQL database.
+    env_file:
+      - .env # Specify the environment file to use for setting environment variables.
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags # Mount the DAGs directory.
+      - ./airflow/logs:/opt/airflow/logs # Mount the logs directory.
+      - ./airflow/plugins:/opt/airflow/plugins # Mount the plugins directory.
+      - ./code:/opt/airflow/code # Mount a custom code directory.
+      - /var/run/docker.sock:/var/run/docker.sock # Mount the Docker socket to allow Airflow to interact with Docker.
+      - ./requirements.txt:/opt/airflow/requirements.txt # Mount the Python requirements file.
+    depends_on:
+      - db # Specify that this service depends on the 'db' service.
+    networks:
+      - my_network # Connect this container to the custom network named 'my_network'.
+    command: >
+      bash -c "airflow db migrate &&
+      airflow standalone" # Command to run database migrations and start Airflow in standalone mode.
+
+  # pgAdmin Service
+  pgadmin:
+    image: dpage/pgadmin4 # Use the official pgAdmin 4 image.
+    container_name: pgadmin_container # Name of the container for pgAdmin.
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com # Default email for pgAdmin login.
+      PGADMIN_DEFAULT_PASSWORD: admin # Default password for pgAdmin login.
+    volumes:
+      - ./postgres/.pgpass:/pgpass/pgpassfile/.pgpass # Mount the .pgpass file for password management.
+    ports:
+      - "8055:80" # Map port 80 of the container to port 8055 on the host machine.
+    depends_on:
+      - db # Specify that this service depends on the 'db' service.
+    networks:
+      - my_network # Connect this container to the custom network named 'my_network'.
+
+# Define custom networks
+networks:
+  my_network:
+    driver: bridge # Use the bridge driver for the custom network.
+```
+
+7. To stop the services, run:
+   ```bash
+   docker-compose down
+   ```
+
+### Setup PostgreSQL Database
+1. Create schema and tables in PostgreSQL for storing stock data.
+   - Use the provided SQL script `create_schema.sql` to create the necessary schema and tables.
+   - Use the provided SQL script `create_tables.sql` to create the necessary tables for stock data.
+   - Use the `grant_and_check.sql` script to grant permissions and check the schema.
+2. Connect to the PostgreSQL database using pgAdmin or any PostgreSQL client.
+3. Run the SQL scripts to set up the database schema and tables.
+
+### Setup Airflow
+1. Access the Airflow UI at `http://localhost:8001`.
