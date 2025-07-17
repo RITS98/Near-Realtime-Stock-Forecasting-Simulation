@@ -417,3 +417,168 @@ https://quicksight.aws.amazon.com
 	3.	Set access permissions (IAM users/groups or email addresses).  
 
 <img width="947" height="358" alt="image" src="https://github.com/user-attachments/assets/7c079316-47be-498e-8237-036b3c78ef55" />
+
+
+
+
+## Deep Learning for Stock Forecasting Using MLflow and Ray
+
+This is the second part of the Realtime Stock Forecasting project, focusing on advanced deep learning techniques for stock price prediction. The implementation combines **Convolutional Neural Networks (CNN)** with **Bidirectional Long Short-Term Memory (BiLSTM)** networks to capture both spatial and temporal patterns in stock market data. The project utilizes MLflow for comprehensive experiment tracking and Ray for distributed training capabilities.
+
+## Data Preparation
+
+The data is downloaded from S3 and stored in a local directory for processing. The pipeline includes comprehensive feature engineering, technical indicator calculation, and sequence preparation for deep learning model consumption.
+
+## Deep Learning Architecture
+
+### CNN-BiLSTM Hybrid Model
+
+Our deep learning solution implements a sophisticated **CNN-BiLSTM** architecture that leverages the strengths of both convolutional and recurrent neural networks:
+
+#### 1. **Convolutional Neural Network (CNN) Layer**
+- **Purpose**: Extract local patterns and features from sequential stock price data
+- **Architecture**: 
+  - First Conv1D layer: 1 → 64 channels, kernel size 3
+  - Second Conv1D layer: 64 → 128 channels, kernel size 3  
+  - Third Conv1D layer: 128 → 64 channels, kernel size 3
+  - MaxPooling layers after each convolution for dimensionality reduction
+  - ReLU activation functions for non-linearity
+- **Input Shape**: (batch_size, 1, 100, 1) - 100-day price sequences
+- **Benefit**: Captures short-term price movements and local trends
+
+#### 2. **Bidirectional LSTM Layers**
+- **Purpose**: Model long-term dependencies and temporal relationships in both forward and backward directions
+- **Architecture**:
+  - First BiLSTM: 128 hidden units (256 total with bidirection)
+  - Second BiLSTM: 64 hidden units (128 total with bidirection)
+  - Dropout layers (30%) for regularization
+- **Benefit**: Captures complex temporal patterns and market cycles
+
+#### 3. **Dense Output Layer**
+- **Purpose**: Final prediction layer for stock price forecasting
+- **Architecture**: Fully connected layer (128 → 1) with linear activation
+- **Output**: Normalized price change prediction
+
+### Model Architecture Diagram
+
+```mermaid
+graph TD
+    A["Input: Stock Price Sequences<br/>(Batch, 1, 100, 1)<br/>100 days of normalized price changes"] --> B["Squeeze Operation<br/>(Batch, 1, 100)"]
+    
+    B --> C["CNN Layer 1<br/>Conv1D: 1→64 channels<br/>Kernel Size: 3<br/>+ ReLU + MaxPool"]
+    C --> D["CNN Layer 2<br/>Conv1D: 64→128 channels<br/>Kernel Size: 3<br/>+ ReLU + MaxPool"]
+    D --> E["CNN Layer 3<br/>Conv1D: 128→64 channels<br/>Kernel Size: 3<br/>+ ReLU + MaxPool"]
+    
+    E --> F["Permute for LSTM<br/>(Batch, Sequence_Length, 64)"]
+    
+    F --> G["Bidirectional LSTM 1<br/>Hidden Size: 128<br/>Output: 256 (128×2)"]
+    G --> H["Dropout Layer<br/>Rate: 30%"]
+    
+    H --> I["Bidirectional LSTM 2<br/>Hidden Size: 64<br/>Output: 128 (64×2)"]
+    I --> J["Dropout Layer<br/>Rate: 30%"]
+    
+    J --> K["Take Last Output<br/>Shape: (Batch, 128)"]
+    K --> L["Dense Layer<br/>128 → 1<br/>Linear Activation"]
+    
+    L --> M["Output: Price Change Prediction<br/>(Batch, 1)<br/>Normalized percentage change"]
+
+    style A fill:#e1f5fe
+    style M fill:#c8e6c9
+    style C fill:#fff3e0
+    style D fill:#fff3e0
+    style E fill:#fff3e0
+    style G fill:#f3e5f5
+    style I fill:#f3e5f5
+    style L fill:#ffebee
+```
+
+### Data Preprocessing Pipeline
+
+1. **Feature Engineering**:
+   - Moving averages (10, 20, 50, 100 days) for trend analysis
+   - Daily returns calculation for volatility assessment
+   - OHLC (Open, High, Low, Close) price analysis
+
+2. **Sequence Generation**:
+   - **Window Size**: 100 days of historical data
+   - **Normalization**: Price changes normalized relative to baseline
+   - **Target**: Next-day normalized price change prediction
+
+3. **Data Splitting**:
+   - **Training**: 80% of sequences
+   - **Testing**: 20% of sequences
+   - **Shuffling**: Applied to prevent temporal bias
+
+## 🛠️ Technologies and Frameworks
+
+### Core Deep Learning Stack
+- **🔥 PyTorch**: Primary deep learning framework for model implementation
+- **⚡ PyTorch Lightning**: High-level framework for organized, scalable training
+- **🧮 NumPy**: Numerical computing for array operations and mathematical functions
+- **🐼 Pandas**: Data manipulation and analysis for stock market datasets
+
+### MLOps and Experiment Management
+- **📊 MLflow**: Comprehensive experiment tracking and model versioning
+  - Automatic logging of model parameters, metrics, and artifacts
+  - Model registry for production deployment
+  - Integration with DagsHub for collaborative ML workflows
+- **🌐 DagsHub**: Git-based data science platform for version control and collaboration
+- **📈 MLflow Logger**: PyTorch Lightning integration for seamless experiment logging
+
+### Distributed Computing and Scaling
+- **☄️ Ray**: Distributed computing framework for scalable ML workloads
+  - **Ray Train**: Distributed training across multiple workers
+  - **Ray Tune**: Hyperparameter optimization (planned for future iterations)
+  - **TorchTrainer**: Ray's PyTorch integration for distributed training
+- **🔧 Ray Lightning Environment**: Seamless integration between Ray and PyTorch Lightning
+
+### Data Visualization and Analysis
+- **📊 Matplotlib**: Comprehensive plotting library for data visualization
+- **🎨 Seaborn**: Statistical data visualization with enhanced aesthetics
+- **📈 Streamlit**: Simple HTML like website to visualize the stock price.
+
+### Development and Deployment
+- **🐍 Python 3.x**: Primary programming language
+- **🚀 CUDA/GPU Support**: Automatic GPU acceleration when available
+- **🐳 Docker**: Containerization for reproducible environments (project-wide)
+- **☁️ AWS S3**: Cloud storage for datasets and model artifacts
+
+## 📈 Model Training Process
+
+### 1. **Data Preparation**
+- Load preprocessed stock market data from S3
+- Generate moving averages and technical indicators
+- Create sliding window sequences for time series learning
+- Normalize price changes relative to baseline values
+
+### 2. **Model Configuration**
+- **Batch Size**: 40 samples per batch
+- **Epochs**: 40 training iterations
+- **Optimizer**: Adam with learning rate 1e-3
+- **Loss Function**: Mean Squared Error (MSE)
+- **Regularization**: Dropout (30%) to prevent overfitting
+
+### 3. **Distributed Training**
+- Ray initialization for distributed computing
+- TorchTrainer configuration with scaling parameters
+- Automatic GPU detection and utilization
+- MLflow integration for comprehensive experiment tracking
+
+### 4. **Experiment Tracking**
+- Automatic logging of hyperparameters and training metrics
+- Model artifact storage and versioning
+- Real-time monitoring of training progress
+- Integration with DagsHub for collaborative development
+
+## 🎯 Key Features
+
+- **Hybrid Architecture**: Combines CNN pattern recognition with LSTM temporal modeling
+- **Bidirectional Processing**: Captures both forward and backward temporal dependencies  
+- **Normalized Predictions**: Robust handling of varying price scales
+- **Distributed Training**: Scalable across multiple workers and GPUs
+- **Comprehensive Logging**: Full experiment reproducibility and monitoring
+- **Cloud Integration**: Seamless data pipeline from S3 to model deployment
+
+
+
+## 📊 Results and Evaluation
